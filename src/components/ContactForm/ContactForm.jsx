@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import { addContact } from 'redux/contactsSlice';
+import { getContacts } from 'redux/selectors';
+import { useSelector, useDispatch } from 'react-redux';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { Label, Button } from './ContactForm.styled';
 import styled from '@emotion/styled';
@@ -45,18 +47,35 @@ let SignupSchema = yup.object().shape({
     .required(),
 });
 
-class ContactForm extends Component {
-  handleSubmit = (values, { resetForm }) => {
-    this.props.onSubmit(values);
+const ContactForm = () =>  {
+    const dispath = useDispatch();
+    const contacts = useSelector(getContacts);
+    
+     const checkContact = checkedNameContact => {
+        const res = contacts.find(contact => contact.name === checkedNameContact);
+        return res;
+      };
+
+    const addNewContact = ({ name, number }) => {
+        if (checkContact(name)) {
+          alert(`${name} is already in contacts`);
+          return;
+        }
+        dispath(addContact(name, number));
+      };
+    
+      
+
+   const handleSubmit = (values, { resetForm }) => {
+    addNewContact(values);
 
     resetForm();
   };
 
-  render() {
     return (
       <Formik
         initialValues={initialValues}
-        onSubmit={this.handleSubmit}
+        onSubmit={handleSubmit}
         validationSchema={SignupSchema}
       >
         <ConttForm autoComplete="off">
@@ -77,7 +96,7 @@ class ContactForm extends Component {
       </Formik>
     );
   }
-}
+
 
 ContactForm.propTypes = {
   onSubmit: PropTypes.func,

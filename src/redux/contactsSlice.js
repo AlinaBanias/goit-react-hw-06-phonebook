@@ -55,4 +55,3 @@ export const { addContact, deleteContact } = contactsSlice.actions;
 
 // export default contactsSlice.reducer;
 
-export const getContacts = state => state.contacts.contacts;
